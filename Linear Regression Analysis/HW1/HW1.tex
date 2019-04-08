@@ -1,0 +1,40 @@
+\documentclass[UTF8]{ctexart}
+    \title{Linear Regression Analysis HW1}
+    \author{软件71 骆炳君 2017013573}
+    \date{\today}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\allowdisplaybreaks[1]
+\begin{document}
+\maketitle
+\pagenumbering{arabic}
+
+\paragraph{1.}
+\subparagraph{a.}
+No, because we don't know the specific distribution of Y, and without specific distribution we cannot caculate the exact probability.
+
+\subparagraph{b.}
+We can.
+\begin{align*}
+    &\because Y=\beta_0+\beta_1X+\epsilon=200+\epsilon, \epsilon\sim N(0,25)\\
+    &\therefore Y\sim N(200,25)\\
+    &
+    \begin{aligned}
+        \therefore P(195<Y<205)&=P(-1<\frac{Y-200}{5}<1)\\
+        &=2(\Phi(1)-0.5)=0.6827
+    \end{aligned}
+\end{align*}
+
+\paragraph{2.}
+\subparagraph{a.}
+Observational, because the study did not control the exercise time of the participants.
+
+\subparagraph{b.}
+The validity is quite weak because the study did not consider the other factors that might both affect the explanatory and dependent variables and investigate which vraiable might more directly explain cause-and-effect relationships.
+
+\subparagraph{c.}
+The age, gender and physical health level of the participants.
+
+\subparagraph{d.}
+Before the study, adequate pre-research should be proceeded to find out the other potential variables that might affect the result. These variables should be monitored during the study and involved in the analysis as well.
+\end{document}

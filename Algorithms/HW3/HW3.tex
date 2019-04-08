@@ -1,0 +1,31 @@
+\documentclass[UTF8]{ctexart}
+    \title{算法分析与设计基础作业3}
+    \author{软件71 骆炳君 2017013573}
+    \date{\today}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\allowdisplaybreaks[1]
+\begin{document}
+\maketitle
+\pagenumbering{arabic}
+
+\paragraph{2.}
+因为A[i]在B中的位置dest=(i+offset) mod n，且P(offset=k)=1/n(k=1,2,...,n)，所以P(dest=k)=1/n(k=1,2,...,n).
+
+但是该算法只是把每一个元素都向后移了offset个元素（将数组看成一个环），并不能产生所有的可能排列，所以不是均匀随机排列.
+
+\paragraph{3.}
+\begin{align*}
+    &\text{记$A_i$为前i个元素彼此不同}\\
+    &
+    \begin{aligned}
+        \text{则所求概率为}P(A_n)&=P(A_1)P(A_2|A_1)\cdots P(A_n|A_{n-1})\\
+        &=1(1-\frac{1}{n^3})\cdots(1-\frac{n-1}{n^3})\\
+        &\ge(1-\frac{n}{n^2})(1-\frac{n}{n^2})\cdots(1-\frac{n}{n^2})\\
+        &=(1-\frac{n}{n^2})^n\\
+        &\ge1-\frac{1}{n}
+    \end{aligned}\\
+    &\text{即证}
+\end{align*}
+
+\end{document}
