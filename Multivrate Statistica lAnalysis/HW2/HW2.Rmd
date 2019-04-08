@@ -1,0 +1,164 @@
+---
+title: "Homework 2"
+author: "Luo Bingjun 2017013573"
+date: '2019-04-05'
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## 4.19
+### (a)
+$$(X_1-\mu)'\Sigma^{-1}(X_1-\mu)\sim \chi_6^2$$
+
+### (b)
+Denote $c_i=\frac{1}{n},\ i=1,2,\cdots,n$
+
+Then
+$$\bar{X}=\sum_{i=1}^nc_iX_i\sim N_6(\mu,\frac{1}{n}\Sigma)$$
+$$\sqrt{n}(\bar{X}-\mu)\sim N_6(0,\Sigma)$$
+
+### (c)
+$$(n-1)S=\sum_{i=1}^n(X_i-\bar{X})(X_i-\bar{X})'\sim W_6(\Sigma, n-1)$$
+
+## 4.20
+Assume that $B\in R^{p\times6}$
+
+Denote$$Y_i=BX_i\sim N_p(B\mu,B\Sigma B')$$
+
+Then
+$$\bar{Y}=\frac{1}{n}\sum Y_i=B\times\frac{1}{n}\sum X_i=B\bar{X}$$
+
+$$B(19S)B'=\sum_{i=1}^n(BX_i-B\bar{X})(BX_i-B\bar{X})'=\sum_{i=1}^n(Y_i-\bar{Y})(Y_i-\bar{Y})' \sim W_6(B\Sigma B',19)$$
+
+### (a)
+$$B(19S)B'=\sum_{i=1}^n(Y_i-\bar{Y})(Y_i-\bar{Y})'\sim W_6(B\Sigma B',19)$$
+
+### (b)
+$$B(19S)B'=\sum_{i=1}^n(Y_i-\bar{Y})(Y_i-\bar{Y})'\sim W_6(B\Sigma B',19)$$
+
+## 4.22
+### (a)
+According to the CLT,
+$$\bar{X}\sim N_p(\mu, \frac{1}{n}\Sigma)$$
+
+### (b)
+According to the CLT,
+$$n(\bar{X}-\mu)'S^{-1}(\bar{X}-\mu)\sim \chi_p^2$$
+
+## 5.1
+### (a)
+$$T^2=\sqrt{n}(\bar{X}-\mu)'S^{-1}\sqrt{n}(\bar{X}-\mu)$$
+```{r}
+n=4
+p=2
+X <- matrix(c(2,8,6,8,12,9,9,10), nrow = n)
+mu <- matrix(c(7,11), nrow=p)
+T2=sqrt(n)*t(colMeans(X)-mu)%*%solve(cov(X))%*%(sqrt(n)*(colMeans(X)-mu))
+T2
+```
+
+### (b)
+$$\frac{2}{2}\times\frac{T^2}{3}\sim F_{2,2}$$
+
+### (c)
+From $\Pr(\frac{2}{2}\times\frac{T^2}{3}>q)=1-\alpha$
+
+We can obtain q
+
+```{r}
+alpha=0.05
+q=qf(1-alpha,p,n-p)
+q
+```
+Because $\frac{2}{2}\times\frac{T^2}{3}<q$, we accept $H_0$
+
+## 5.2
+Before $X$ is changed, $T^2$ is
+```{r}
+n=3
+p=2
+X <- matrix(c(6,10,8,9,6,3), nrow = n)
+mu <- matrix(c(9,5), nrow=p)
+T2=sqrt(n)*t(colMeans(X)-mu)%*%solve(cov(X))%*%(sqrt(n)*(colMeans(X)-mu))
+T2
+```
+
+After $X$ is changed, $T^2$ is
+```{r}
+C <-matrix(c(1,1,-1,1), nrow = 2)
+X <- X%*%t(C)
+mu <- C%*%mu
+T2=sqrt(n)*t(colMeans(X)-mu)%*%solve(cov(X))%*%(sqrt(n)*(colMeans(X)-mu))
+T2
+```
+
+## 5.5
+$$H_0:\mu'=[0.55,0.60]\leftrightarrow H_1:\mu'\ne[0.55,0.60]$$
+```{r}
+n=42
+p=2
+x_bar<-matrix(c(0.564,0.603), nrow = p)
+mu<-matrix(c(0.55,0.60), nrow = p)
+S<-matrix(c(.0144,.0117,.0117,.0146), nrow = p)
+T2=n*t(x_bar-mu)%*%solve(S)%*%(x_bar-mu)
+T2/(n-1)*(n-p)/p
+```
+From $\Pr(\frac{40}{2}\times\frac{T^2}{41}>q)=1-\alpha$
+
+We can obtain q
+```{r}
+alpha=0.05
+q=qf(1-alpha,p,n-p)
+q
+```
+
+Because $\frac{40}{2}\times\frac{T^2}{41}<q$, we accept $H_0$
+
+The result is consistent with Figure 5.1 because it is equivalent that we accept $H_0$ and $\mu$ falls into the confidence ellipse.
+
+## 5.7
+Simultaneous confidence intervals:
+```{r}
+data=read.table("T5-1.DAT")
+alpha=0.05
+n = dim(data)[1]
+p = dim(data)[2]
+X=as.matrix(data)
+s=cov(X)
+x_bar=colMeans(X)
+for (i in 1:3)
+{
+  print(c(x_bar[i]-sqrt(p*(n-1)/(n-p)*qf(1-alpha,p,n-p))*sqrt(s[i,i]/n),x_bar[i]+sqrt(p*(n-1)/(n-p)*qf(1-alpha,p,n-p))*sqrt(s[i,i]/n)))
+}
+```
+
+Borferroni intervals:
+```{r}
+for (i in 1:3)
+{
+  print(c(x_bar[i]-qt(1-alpha/(2*p),n-1)*sqrt(s[i,i]/n),x_bar[i]+qt(1-alpha/(2*p),n-1)*sqrt(s[i,i]/n)))
+}
+```
+The Borferroni intervals are more precise than simultaneous confidence intervals.
+
+## 5.8
+The value of a:
+```{r}
+n=42
+p=2
+x_bar<-matrix(c(0.564,0.603), nrow = p)
+mu<-matrix(c(0.55,0.60), nrow = p)
+S<-matrix(c(.0144,.0117,.0117,.0146), nrow = p)
+a=solve(S)%*%(x_bar-mu)
+a
+```
+```{r}
+T2_value=n*(t(a)%*%(x_bar-mu))%*%(t(a)%*%(x_bar-mu))*solve(t(a)%*%S%*%a)
+T2_value
+```
+It is equal to $T^2$ in Exercise 5.5.

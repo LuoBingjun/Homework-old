@@ -1,0 +1,186 @@
+\documentclass[UTF8]{ctexart}
+    \title{算法分析与设计基础作业1}
+    \author{软件71 骆炳君 2017013573}
+    \date{\today}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\allowdisplaybreaks[1]
+\begin{document}
+\maketitle
+\pagenumbering{arabic}
+
+\paragraph{a.}
+\begin{align*}
+    &\forall f(n)=\Theta(n^2)\\
+    &\exists c_1,c_2,n_0>0,s.t.\forall n>n_0,0\le c_1n^2\le f(n)\le c_2n^2\\
+    &\therefore c_1n^2\le 2n+f(n) \le c_2n^2+2n\\
+    &\text{取}c_3>c_2,n_1=max\{n_0,\frac{2}{c_3-c_2}\}\\
+    &\because\exists c_1,c_3,n_1>0,s.t.\forall n>n_1,0\le c_1n^2\le 2n+f(n)\le c_2n^2+2n\le c_3n^2\\
+    &\therefore 2n+f(n)=\Theta(n^2)\\
+    &\forall f(n)=\Theta(n^2)\\
+    &\exists c_1,c_2,n_0>0,s.t.\forall n>n_0,0\le c_1n^2\le f(n)\le c_2n^2\\
+    &\therefore c_1n^2-2n\le f(n)-2n \le c_2n^2\\
+    &\text{取}c_3<c_1,n_1=max\{n_0,\frac{2}{c_1-c_3}\}\\
+    &\because\exists c_2,c_3,n_1>0,s.t.\forall n>n_1,0\le c_3n^2\le c_1n^2-2n\le f(n)-2n\le c_2n^2\\
+    &\therefore f(n)=\Theta(n^2)+2n\\
+    &\text{综上可证：}\Theta(n^2)+2n=\Theta(n^2)
+\end{align*}
+
+\paragraph{b.}
+\begin{align*}
+    &\forall f(n)\in \Theta(g(n)),\\
+    &\because\exists c_1,c_2,n_0>0,s.t.\forall n>n_0,0\le c_1g(n)\le f(n)\le c_2g(n)\\
+    &\therefore \lim_{n\rightarrow\infty}\frac{f(n)}{g(n)}\ne0\\
+    &\therefore f(n)\notin o(g(n))\\
+    &\text{即}\Theta(g(n))\cap o(g(n))=\emptyset
+\end{align*}
+
+\paragraph{c.}
+\begin{align*}
+    &\text{欲证明原命题，只需证明}\\
+    &\exists f(n),g(n),\text{满足}f(n)\in O(g(n)),f(n)\notin\Theta(g(n))\cup o(g(n))\\
+    &\text{取}g(n)=n^3,f(n)=\begin{cases}
+        n^3,&\text{n为奇数}\\
+        n^2,&\text{n为偶数}
+    \end{cases}\\
+    &\text{满足这个条件，所以原命题成立}
+\end{align*}
+
+\paragraph{d.}
+\begin{align*}
+    &\text{若}f(n)\ge g(n)\\
+    &\text{则}f(n)=max\{f(n),g(n)\}\\
+    &\therefore \forall n>0, \frac{1}{2}(f(n)+g(n))\le f(n)\le f(n)+g(n)\\
+    &\therefore f(n)=\Theta(f(n)+g(n))\\
+    &\text{若}f(n)<g(n)\\
+    &\text{则}g(n)=max\{f(n),g(n)\}\\
+    &\therefore \forall n>0, \frac{1}{2}(f(n)+g(n))\le g(n)\le f(n)+g(n)\\
+    &\therefore g(n)=\Theta(f(n)+g(n))\\
+    &\text{综上可证：}max\{f(n),g(n)\}=\Theta(f(n)+g(n))
+\end{align*}
+
+\paragraph{3-3}
+\subparagraph{(a)}
+排列如下：
+
+$2^{2^{n+1}}$
+
+$2^{2^n}$
+
+$(n+1)!$
+
+$n!$
+
+$e^n$
+
+$n\cdot2^n$
+
+$2^n$
+
+$(\frac{3}{2})^n$
+
+$(lgn)^{lgn}$
+
+$n^{lglgn}$
+
+$(lgn)!$
+
+$n^3$
+
+$4^{lgn}$
+
+$n^2$
+
+$nlgn$
+
+$lg(n!)$
+
+$n$
+
+$2^{lgn}$
+
+$(\sqrt{2})^{lgn}$
+
+$2^{\sqrt{2lgn}}$
+
+$lg^2n$
+
+$lnn$
+
+$\sqrt{lgn}$
+
+$lnlnn$
+
+$2^{lg^*n}$
+
+$lg^*n$
+
+$lg^*(lgn)$
+
+$lg(lg^*n)$
+
+$n^{1/lgn}$
+
+$1$
+
+划分的等价类为：
+
+$\{2^{2^{n+1}}\}$
+
+$\{2^{2^n}\}$
+
+$\{(n+1)!\}$
+
+$\{n!\}$
+
+$\{e^n\}$
+
+$\{n\cdot2^n\}$
+
+$\{2^n\}$
+
+$\{(\frac{3}{2})^n\}$
+
+$\{(lgn)^{lgn},n^{lglgn}\}$
+
+$\{(lgn)!\}$
+
+$\{n^3\}$
+
+$\{4^{lgn},n^2\}$
+
+$\{nlgn,lg(n!)\}$
+
+$\{n,2^{lgn}\}$
+
+$\{(\sqrt{2})^{lgn}\}$
+
+$\{2^{\sqrt{2lgn}}\}$
+
+$\{lg^2n\}$
+
+$\{lnn\}$
+
+$\{\sqrt{lgn}\}$
+
+$\{lnlnn\}$
+
+$2^{lg^*n}$
+
+$\{lg^*n\}$
+
+$\{lg^*(lgn)\}$
+
+$\{lg(lg^*n)\}$
+
+$\{n^{1/lgn},1\}$
+
+\subparagraph{(b)}
+$$
+f(n)=
+\begin{cases}
+    0,&n\text{为奇数}\\
+    2^{2^{n+2}},&n\text{为偶数}
+\end{cases}
+$$
+\end{document}

@@ -1,0 +1,86 @@
+\documentclass[UTF8]{ctexart}
+    \title{算法分析与设计基础作业4}
+    \author{软件71 骆炳君 2017013573}
+    \date{\today}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{listings}
+\usepackage{xcolor}
+\lstset{
+    numbers=left, 
+    numberstyle= \small, 
+    escapeinside=``, % 英文分号中可写入中文
+    xleftmargin=2em,xrightmargin=2em, aboveskip=1em,
+    framexleftmargin=2em
+} 
+\setcounter{secnumdepth}{0}
+\allowdisplaybreaks[1]
+\begin{document}
+\maketitle
+\pagenumbering{arabic}
+
+\subsection{1.}
+记中位数点的位置为$x$，不妨设$\alpha\le\frac{1}{2}\le1-\alpha$，考虑$P_0=P(x\le\alpha\le\frac{1}{2})$.因为仅考虑划分比例，可认为数组A是无限长的，即选出三个元素的过程是相互独立的，同时因为选出的三个元素的位置在所有位置中是等可能的，所以可应用几何概型，将$P_0$分为两种情况：有且仅有2个元素落在前$\alpha$区间、三个元素均落在前$\alpha$区间.
+
+则$$P_0=\alpha^3+\binom{3}{2}\alpha^2(1-\alpha)=3\alpha^2-2\alpha^3$$
+
+由划分的对称性可得，所求概率为$1-2P_0=1-6\alpha^2+4\alpha^3$
+
+\subsection{2.}
+\subsubsection{a.}
+此时每一次划分都将数组分为$(n-1):1$，即快速排序的最坏情况，$T(n)=\Theta(n^2)$.
+
+\subsubsection{b.}
+\begin{lstlisting}
+    x=A[r]
+    i=p-1
+    j=p-1
+    for k=p to r
+        if A[k]<x
+            i=i+1
+            j=j+1
+            exchange A[k] with A[j]
+            exchange A[j] with A[i]
+        elif A[k]=x
+            j=j+1
+            exchange A[k] with A[j]
+    return i+1,j
+\end{lstlisting}
+
+\subsubsection{c.}
+\lstset{language=Python}
+\begin{lstlisting}
+    import random
+
+    def PARTITION(A, p, r):
+        x = A[r]
+        i = p-1
+        j = p-1
+        for k in range(p, r+1):
+            if A[k] < x:
+                i = i+1
+                j = j+1
+                A[k], A[j] = A[j], A[k]
+                A[j], A[i] = A[i], A[j]
+            elif A[k] == x:
+                j = j+1
+                A[k], A[j] = A[j], A[k]
+        return i+1, j
+
+
+    def RANDOMIZED_PARTITON(A, p, r):
+        i = random.randint(p, r)
+        A[r], A[i] = A[i], A[r]
+        return PARTITION(A, p, r)
+
+
+    def QUICKSORT(A, p, r):
+        if p < r:
+            q, t = RANDOMIZED_PARTITON(A, p, r)
+            QUICKSORT(A, p, q - 1)
+            QUICKSORT(A, t + 1, r)
+\end{lstlisting}
+
+\subsubsection{d.}
+应该改变(7.2)以后的分析方法，在算法实现过程中可以将与x相等的元素划分到小于x的集合中且不改变时间复杂度，这样即使没有互异的假设，也能保证一旦一个满足$z_i\le x<z_j$的主元被选定后，所有这样的$z_i$、$z_j$都不会相互比较了，因此不会影响其后的分析和结论.
+\end{document}
