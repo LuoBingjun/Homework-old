@@ -1,0 +1,165 @@
+---
+title: "Homework 5"
+author: "Luo Bingjun 2017013573 Software 71"
+date: "2019-4-11"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Prob-1: KNNL 3.7
+
+```{R}
+data = read.table(file='CH01PR27.txt', header=F)
+n=60
+colnames(data) <- c('Y', 'X')
+attach(data)
+```
+
+### a.
+```{R}
+stem(X)
+```
+
+It is consistent with the random selection because the number of women in each 10-year age group is approximately the same.
+
+### b.
+```{R}
+reg <- lm(Y~X)
+# e_i
+e=reg$residuals
+plot(X,e)
+abline(0,0)
+```
+
+The plot shows the variance of $e_i$ seems not to be the same, because the variance of two side is greater than center.
+
+### c.
+$e_i$ against $\hat{Y_i}$:
+```{R}
+Y_hat=predict(reg,data.frame(X))
+plot(Y_hat,e)
+abline(0,0)
+```
+
+$e_i$ against $X_i$:
+```{R}
+plot(X,e)
+abline(0,0)
+```
+
+They provide the same information because $\hat{Y_i}$ has a linear relation with $X_i$.
+
+### d.
+```{R}
+qqnorm(e)
+# ordered residuals 
+ordered <- sort(e)
+# expected values
+expected <- qnorm(rank(ordered)/(length(ordered) + 1))
+# coefficient of correlation
+cor(ordered,expected)
+```
+Because $0.9897475>0.984$, we conclude that the normal assumption is tenable.
+
+### e.
+$$H_0:\gamma_1=0\leftrightarrow H_1:\gamma_1\ne0$$
+
+```{R}
+alpha=0.05
+SSE=sum(e^2)
+reg_star=lm(e^2~X)
+SSR_star=anova(reg_star)[,2][2]
+# test statistic
+(SSR_star/2)/(SSE/n)^2
+qchisq(1-alpha, 1)
+detach(data)
+```
+Since $X_{BP}^2>\chi_{0.95;1}^2$, we conclude $H_1$, that error variance is not constant.
+
+It is consistent with my preliminary findings.
+
+## Prob‐2: KNNL 3.15
+
+```{R}
+data = read.table(file='CH03PR15.txt', header=F)
+n=15
+c=5
+colnames(data) <- c('Y', 'X')
+attach(data)
+```
+
+### a.
+```{R}
+reg<-lm(Y~X)
+reg
+```
+The regression function is $$\hat{Y}=-0.324X+2.575$$
+
+### b.
+$$H_0:EY=\beta_0+\beta_1X\leftrightarrow H_1:EY\ne\beta_0+\beta_1X$$
+
+```{R}
+Reduced <- lm(Y ~ X)
+Full <- lm(Y ~ 0 + as.factor(X), data)
+anova(Reduced, Full)
+alpha=0.025
+qf(1-alpha,c-2,n-c)
+```
+
+Since $F^*>F_{0.975;3,10}$, we conclude $H_1$, that the regression function is not linear.
+
+### c.
+The test in (b) doesn't indicate what regression function is approriate because it is all under $H_0$, that the regression function is linear.
+
+## Prob‐3: KNNL 3.16
+
+### a.
+```{R}
+scatter.smooth(Y~X)
+```
+
+I might try $Y'=\log_{10}Y$.
+
+### b.
+```{R}
+library(MASS)
+x= boxcox(Y ~ X, lambda = c(-.2, -.1, 0, .1, .2))
+```
+
+It suggests that $Y'=Y^{0.03}$.
+
+### c.
+```{R}
+Y1=log10(Y)
+reg<-lm(Y1~X)
+reg
+```
+
+The regression function is $$\hat{Y'}=-0.1954X+0.6549$$
+
+### d.
+```{R}
+plot(X,Y1)
+abline(reg)
+```
+
+It appears to be a good fit.
+
+### e.
+```{R}
+plot(reg$fitted.values,reg$residuals)
+abline(0,0)
+qqnorm(reg$residuals)
+```
+
+The plots show that residuals appear to be linear and normally distributed.
+
+### f.
+The original regression function is
+$$\hat{Y}=10^{-0.1954X+0.6549}$$
+
+## Prob-4:
+

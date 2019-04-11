@@ -853,3 +853,4 @@ compile_commands.json
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
+.Rproj.user
