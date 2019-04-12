@@ -2,7 +2,9 @@
 title: "Homework 5"
 author: "Luo Bingjun 2017013573 Software 71"
 date: "2019-4-11"
-output: html_document
+output:
+  pdf_document: default
+  html_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -153,6 +155,7 @@ It appears to be a good fit.
 plot(reg$fitted.values,reg$residuals)
 abline(0,0)
 qqnorm(reg$residuals)
+detach(data)
 ```
 
 The plots show that residuals appear to be linear and normally distributed.
@@ -162,4 +165,58 @@ The original regression function is
 $$\hat{Y}=10^{-0.1954X+0.6549}$$
 
 ## Prob-4:
+```{R}
+data = read.table(file='PROB4.txt', header=T)
+colnames(data) <- c('C', 'V')
+n=12
+attach(data)
+```
 
+### a.
+```{R}
+scatter.smooth(V~C)
+```
+
+It isn't linear at all, but fits one of the prototype in Figure 3.15.
+
+### b.
+```{R}
+# 1/V
+Y=1/V
+# 1/C
+X=1/C
+scatter.smooth(Y~X)
+```
+
+The fit appears linear, but the independent variance assumption appears unconstant.
+
+### c.
+They are different from each other. The distribution of 1/V may be more influential in determining the fit.
+
+### d.
+```{R}
+reg<-lm(Y~X)
+reg
+```
+The regression line is $$\frac{1}{V}=0.002472\frac{1}{C}+0.0051072$$
+
+```{R}
+residual=reg$residuals
+predicted=reg$fitted.values
+plot(predicted,residual)
+abline(0,0)
+```
+
+The plot suggets that the variance of residuals may be not constant.
+
+### e.
+```{R}
+V_hat=1/predicted
+data1=rbind(data.frame(V=V_hat, group='V_hat',C=C), data.frame(V=V, group='V', C=C))
+library(lattice)
+xyplot(data1$V~data1$C, groups=data1$group)
+```
+
+The pink points in the plot are V, while the blue ones are the predicted values of V.
+
+The fit appears well when $C<0.2$, but as C increases, it becomes worse and worse, because the residual variance varies with C.
