@@ -43,4 +43,4 @@ $$d_1(I)=|\frac{\partial}{\partial x}I|+|\frac{\partial}{\partial y}I|$$
 
 ![](C:\Projects\Homework\Algorithms\HW6\P3选做\Figure_1.jpg)
 
-结果表明，Seam carving对于大部分图片都能够比较好地保留图片中的关键信息，但对复杂形状（如图2和图3中的云）的处理容易变形，对物体边缘的处理也不够平滑.
+结果表明，Seam carving对于大部分图片都能够比较好地保留图片中的关键信息，但也存在着一些问题，例如对复杂形状（如图2和图3中的云）的处理容易变形，对物体边缘的处理不够平滑等.
