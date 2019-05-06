@@ -18,7 +18,7 @@ $$\hat{c}_i=c_i+\Phi_i-\Phi_{i-1}=\frac{1}{3}n+(\frac{2}{3}n-2(\frac{1}{3}n-1))-
 $$\Phi(T)=2\cdot T.num-T.size$$
 
 若$a_i\ge\frac{1}{2}$，
-$$\hat{c}_i=c_i+\Phi_i-\Phi_{i-1}=1-2=-1$$
+$$\hat{c}_i=c_i+\Phi_i-\Phi_{i-1}=O(1)$$
 
 若$a_i<\frac{1}{2}$，则$num_{i-1}=\frac{1}{2}size_{i-1}，$$\Phi_i=size_i-2num_i$，
 $$\hat{c}_i=c_i+\Phi_i-\Phi_{i-1}=1+(size_i-2num_i)-(2num_{i-1}-size_{i-1})=1+2=3$$
