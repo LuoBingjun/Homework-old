@@ -1,0 +1,205 @@
+---
+title: "HW6"
+author: "Luo Bingjun 2017013573 Software 71"
+date: "2019/4/29"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+## Prob-1: KNNL 5.4, KNNL 5.12
+```{R}
+n=5
+X<-matrix(c(1,1,1,1,1,8,4,0,-4,-8), ncol=2)
+Y<-matrix(c(7.8,9.0,10.2,11.0,11.7))
+```
+
+### (1)
+```{R}
+t(Y)%*%Y
+```
+
+### (2)
+```{R}
+t(X)%*%X
+```
+
+### (3)
+```{R}
+t(X)%*%Y
+```
+
+### (4)
+```{R}
+solve(t(X)%*%X)
+```
+
+## Prob‐2: KNNL 5.23
+### a.
+vector of estimated regression coeffecients:
+
+```{R}
+b=solve(t(X)%*%X)%*%(t(X)%*%Y)
+b
+```
+
+vector of residuals:
+
+```{R}
+H=X%*%solve(t(X)%*%X)%*%t(X)
+e=(diag(n)-H)%*%Y
+e
+```
+
+SSR:
+
+```{R}
+J=matrix(rep(1,time=n^2),nrow=n)
+SSR=t(b)%*%t(X)%*%Y-(1/n)*t(Y)%*%J%*%Y
+SSR
+```
+
+SSE:
+
+```{R}
+SSE=t(e)%*%e
+MSE=SSE/(n-2)
+SSE
+```
+
+estimated variance-covariance matrix of $b$:
+
+```{R}
+sigma_b=MSE[1,1]*solve(t(X)%*%X)
+sigma_b
+```
+
+point estimate of $E(Y_h)$ when $X_h=-6$:
+
+```{R}
+X_h=matrix(c(1, -6))
+t(X_h)%*%b
+```
+
+estimated variance of $\hat{Y}_h$ when $X_h=-6$:
+
+```{R}
+t(X_h)%*%sigma_b%*%X_h
+```
+
+### b.
+$X$ is symmetric with a mean of 0.
+
+### c.
+$H=$
+```{R}
+H=X%*%solve(t(X)%*%X)%*%t(X)
+H
+```
+
+its rank:
+```{R}
+qr(H)$rank
+```
+
+verifying it is idempotent:
+```{R}
+all.equal(H%*%H,H)
+```
+
+### d.
+```{R}
+(diag(n)-H)%*%(MSE[1,1]*diag(n))%*%t(diag(n)-H)
+```
+
+## Prob‐3: KNNL 6.5
+```{R}
+n=16
+data = read.table(file='CH06PR05.txt', header=F)
+data = cbind(data,data$V2*data$V3)
+colnames(data) <- c('Y', 'X1', 'X2', 'X12')
+```
+
+### a.
+denote $X=(1_{n}, X_1,X_2,X_{12})$, $\beta=(\beta_0,\beta_1,\beta_2,\beta_{12})'$, then
+$$Y=X\beta+\epsilon$$
+
+assumptions:
+$$\epsilon_i\ i.i.d. \sim N(0,\sigma^2),\ i=1,2,\cdots,n$$
+
+### b.
+scatter plot matrix:
+```{R}
+pairs(data[, c("Y", "X1", "X2", "X12")])
+```
+
+correlation matrix:
+```{R}
+cor(data)
+```
+
+There appears to be linear relations between $Y$ and $X_1$, $Y$ and $X_1 X_2$, except for $Y$ and $X_2$.
+
+### c.
+the fitted regression model:
+```{R}
+reg=lm(Y ~ X1 + X2 + X12, data=data)
+summary(reg)
+```
+
+ANOVA test results:
+```{R}
+anova(reg)
+```
+
+$R^2$ is 0.9622, adjusted $R_a^2$ is 0.9528, the estimate of error variance is $2.488^2=6.190$.
+
+### d.
+```{R}
+plot(reg$fitted.values, reg$residuals)
+abline(0,0)
+```
+
+The assumptions appear to fit the data.
+
+### e.
+reduced model:
+
+denote $X=(1_{n}, X_1,X_2)$, $\beta=(\beta_0,\beta_1,\beta_2)'$, then
+$$Y=X\beta+\epsilon$$
+
+assumptions:
+$$\epsilon_i\ i.i.d. \sim N(0,\sigma^2),\ i=1,2,\cdots,n$$
+
+scatter plot matrix:
+```{R}
+pairs(data[, c("Y", "X1", "X2")])
+```
+
+correlation matrix:
+```{R}
+cor(data[,1:3])
+```
+
+the fitted regression model:
+```{R}
+reg=lm(Y ~ X1 + X2, data=data)
+summary(reg)
+```
+
+ANOVA test results:
+```{R}
+anova(reg)
+```
+
+$R^2$ is 0.9521, adjusted $R_a^2$ is 0.447, the estimate of error variance is $2.693^2=7.252$.
+
+```{R}
+plot(reg$fitted.values, reg$residuals)
+abline(0,0)
+```
+
+The assumptions still appears to be fit for the data.
+
+### f.
+I would recommand the non-reduced model, because the added $X_1X_2$ term seems to fit the linear relation assumptions, and it does have smaller MSE.
