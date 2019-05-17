@@ -1,0 +1,215 @@
+---
+title: "Homework 7"
+author: "Luo Bingjun 2017013573 Software 71"
+date: "2019/5/16"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+## KNNL 6.15
+
+```{R}
+n=46
+p=4
+data = read.table(file='CH06PR15.txt', header=F)
+colnames(data) <- c('Y', 'X1', 'X2', 'X3')
+attach(data)
+```
+
+### b.
+scatter plot matrix:
+
+```{R}
+pairs(data)
+```
+
+correlation matrix:
+
+```{R}
+cor(data)
+```
+
+There seems to be negative correlations between Y and $X_1$,$X_2$,$X_3$, but there may also be strong linear relationships among the independent variables, as a potential risk of collinearity.
+
+### c.
+```{R}
+reg <- lm(Y ~ X1 + X2 + X3)
+reg
+```
+
+estimated regression function:
+$$Y=158.491-1.142X_1-0.442X_2-13.470X_3$$
+
+$b_2$ is interpreted by the fact that patient satisfaction decreases as the severity of the illness goes up with other variables unchanged.
+
+### d.
+
+box plot of the residuals:
+
+```{R}
+boxplot(reg$residuals)
+```
+
+There appears to be no outlier.
+
+### e.
+
+```{R}
+summary(reg)
+plot(reg$fitted.values, reg$residuals)
+plot(X1, reg$residuals)
+plot(X2, reg$residuals)
+plot(X3, reg$residuals)
+plot(X1*X2, reg$residuals)
+plot(X1*X3, reg$residuals)
+plot(X2*X3, reg$residuals)
+qqnorm(reg$residuals)
+qqline(reg$residuals)
+```
+
+The residuals appear to fit the independence and equal-variance assumptions well, but not so good in normal assumption. And there is an obvious colinearity among $X_1$, $X_2$ and $X_3$, which ruins the regression model a lot.
+
+## KNNL 6.16
+### a.
+$$H_0:\beta_1=\beta_2=\beta_3\leftrightarrow H_1:\beta_k\ne0\ k=1,2\ or\ 3$$
+
+denote the test statistic $$T^*=\frac{MSM}{MSE}\sim F_{p-1;n-p}$$
+
+```{R}
+alpha=0.10
+MSM=sum((reg$fitted.values-mean(Y))^2)/(p-1)
+MSE=sum((reg$residuals)^2)/reg$df.residual
+T=MSM/MSE
+T
+qf(1-alpha, p-1, n-p)
+```
+
+$T=30.05288>F_{p-1;n-p}(\alpha)$, so we reject $H_0$, which implies that at least one of $\beta_1$, $\beta_2$ and $\beta_3$ is not 0.
+
+```{R}
+1-pf(T, p-1 ,n-p)
+```
+
+P-value is $1.5419\times10^{-10}$.
+
+### b.
+```{R}
+confint(reg, level=0.90)
+```
+
+### c.
+from the summary of reg we obtain that $R^2=0.6822$, so $R=0.83$, which indicates that there appears to be a regression relation.
+
+## KNNL 6.17
+### a.
+```{R}
+predict(reg, newdata=data.frame(X1=35,X2=45,X3=2.2), se.fit=TRUE, interval="confidence", level=0.90)
+```
+
+### b.
+```{R}
+predict(reg, newdata=data.frame(X1=35,X2=45,X3=2.2), se.fit=TRUE, interval="predict", level=0.90)
+```
+
+## KNNL 7.5
+### a.
+```{R}
+reg1 <- lm(Y ~ X2 + X1 + X3)
+anova(reg1)
+```
+
+### b.
+$$H_0:\beta_3=0\leftrightarrow H_1:\beta_3\ne0$$
+$$F^*=\frac{SSE(X_1,X_2)-SSE(X_1,X_2,X_3)}{SSE(X_1,X_2,X_3)/n-p}=\frac{SSR(X_3|X_1,X_2)}{SSE(X_1,X_2,X_3)/42}\sim F_{1;42}$$
+
+```{R}
+F=364.2/(4248.8/42)
+F
+qf(0.975, 1, 42)
+```
+
+$F^*=3.6<F_{1;42}(0.975)$, so we accept $H_0$.
+
+P-value is 
+
+```{R}
+1-pf(F, 1, 42)
+```
+
+## KNNL 7.6
+$$H_0:\beta_2,\beta_3=0\leftrightarrow H_1:\beta_2\ne0\ or\ \beta_3\ne0$$
+$$F^*=\frac{SSE(X_1,X_2)-SSE(X_1,X_2,X_3)}{SSE(X_1,X_2,X_3)/n-p}=\frac{SSR(X_3|X_1,X_2)}{SSE(X_1,X_2,X_3)/42}\sim F_{1;42}$$
+
+```{R}
+F=(480.9+364.2)/2/(4248.8/42)
+F
+qf(0.975, 2, 42)
+```
+
+$F^*=4.18>F_{1;42}(0.975)$, so we reject $H_0$.
+
+P-value is 
+
+```{R}
+1-pf(F, 2, 42)
+```
+
+## KNNL 7.9
+$$H_0:\beta_1=-1.0,\beta_2=0\leftrightarrow H_1:\beta_1\ne-1.0\ or\ \beta_2\ne0$$
+full model:
+$$Y=\beta_0+\beta_1X_1+\beta_2X_2+\beta_3X_3$$
+
+reduced model:
+$$Y=\beta_0-1.0X_1+\beta_3X_3$$
+
+$$F^*=\frac{(SSE(R)-SSE(F))/2}{SSE(F)/42}\sim F_{2;42}$$
+
+```{R}
+reg2<-lm(Y+X1 ~ X3)
+SSE_R=sum(reg2$residuals^2)
+SSE_F=sum(reg$residuals^2)
+F=(SSE_R-SSE_F)/2/(SSE_F/42)
+F
+qf(0.975, 2, 42)
+```
+
+$F^*=0.88<F_{2;42}(0.975)$, so we accept $H_0$.
+
+## KNNL 7.26
+### a.
+```{R}
+reg3<-lm(Y ~ X1 + X2)
+reg3
+```
+
+fitted regression function:
+$$Y=156.67-1.27X_1-0.92X_2$$
+
+### b.
+$\beta_2$ changes a lot while $\beta_1$ appears to remain.
+
+### c.
+No, $SSR(X_1)=8105.0$, while $SSR(X_1|X_3)=3309.3$.
+
+No, $SSR(X_2)=4824.4$, while $SSR(X_2|X_3)=693.8$
+
+### d.
+The linear relationship between $X_2$ and $X_3$ appears to be relatively strong, which affects $\beta_2$ in (b) and suggets colinearity may exists in the data.
+
+## KNNL 7.29
+### a.
+$$
+\begin{aligned}
+SSR(X_1, X_2, X_3, X_4)&=SSR(X_1) + (SSR(X_1, X_2, X_3)-SSR(X_1))+(SSR(X_1,X_2,X_3,X_4)-SSR(X_1,X_2,X_3))\\
+&=SSR(X_1)+SSR(X_2,X_3|X_1)+SSR(X_4|X_1,X_2,X_3)
+\end{aligned}
+$$
+
+### b.
+$$
+\begin{aligned}
+SSR(X_1, X_2, X_3, X_4)&=SSR(X_2,X_3)+(SSR(X_1,X_2,X_3)-SSR(X_2,X_3))+(SSR(X_1,X_2,X_3,X_4)-SSR(X_1,X_2,X_3))\\
+&=SSR(X_2,X_3)+SSR(X_1|X_2,X_3)+SSR(X_4|X_1,X_2,X_3)
+\end{aligned}
+$$
