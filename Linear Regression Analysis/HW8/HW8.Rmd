@@ -1,0 +1,39 @@
+---
+  output:
+    pdf_document: default
+    html_document: default
+---
+# Homework 8
+Luo Bingjun 2017013573 Software 71
+2019/5/23
+
+## Prob-1: KNNL 7.33
+$$
+\begin{aligned}
+SSR(X_1)&=\sum(b_1(X_1-\bar{X_1}))^2\\
+&=\frac{b_1^2(\sum(X_1-\bar{X_1})^2)^2}{\sum(X_1-\bar{X_1})^2}\\
+&=\frac{(\sum(X_1-\bar{X_1}(Y-\bar{Y})^2)^2}{\sum(X_1-\bar{X_1})^2}\\
+&=r_{Y1}^2\sum(Y-\bar{Y})^2
+\end{aligned}
+$$
+
+$$
+SSE(X_1)=SST-SSR(X_1)=(1-r_{Y1}^2)\sum(Y-\bar{Y})^2
+$$
+
+$$
+SSR(X_1,X_2)=b_1\sum(X_1-\bar{X_1})(Y-\bar{Y})+b_2\sum(X_2-\bar{X_2})(Y-\bar{Y})
+$$
+
+From (7.56) we can obtain
+$$
+SSR(X_1,X_2)=\frac{1}{1-r_{12}^2}((r_{Y1}^2+r_{Y2}^2)\sum(Y-\bar{Y})^2+2r_{Y1}r_{Y2}r_{12}\sum(Y-\bar{Y})^2)
+$$
+
+$$
+\begin{aligned}
+r_{Y2|1}^2&=\frac{SSR(X_1,X_2)-SSR(X_1)}{SSE(X_1)}\\
+&=\frac{(r_{Y1}^2+r_{Y2}^2+2r_{Y1}r_{Y2}r_{12}-r_{Y1}^2(1-r_{12}^2))\sum(Y-\bar{Y})^2}{(1-r_{Y1}^2)(1-r_{12}^2)\sum(Y-\bar{Y})^2}\\
+&=\frac{(r_{Y2}-r_{12}r_{Y1})^2}{(1-r_{Y1}^2)(1-r_{12}^2)}
+\end{aligned}
+$$
