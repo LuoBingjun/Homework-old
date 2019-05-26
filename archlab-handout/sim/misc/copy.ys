@@ -1,0 +1,59 @@
+# 骆炳君 软件71 2017013573
+
+.pos 0 
+# init
+irmovl Stack, %esp
+rrmovl %esp, %ebp
+irmovl $3, %edx
+pushl %edx
+irmovl dest, %edx
+pushl %edx
+irmovl src, %edx
+pushl %edx
+call copy_block
+halt
+
+.align 4 
+# Source block 
+src: 
+	.long 0x00a 
+	.long 0x0b0 
+	.long 0xc00 
+# Destination block 
+dest: 
+	.long 0x111 
+	.long 0x222 
+	.long 0x333 
+
+copy_block:
+	pushl   %ebp            # set stack pointers
+	rrmovl  %esp, %ebp
+    pushl   %esi			# save %esi
+    pushl   %edi			# save %edi
+	mrmovl  8(%ebp), %edi	# get *src(%edi)
+    mrmovl  12(%ebp), %esi	# get *dest(%esi)
+    mrmovl  16(%ebp), %edx	# get len(%edx)
+	irmovl	$0, %ecx		# result
+	andl	%edx, %edx		# len > 0?
+	jle	L15					# return when len <= 0
+L13:						# loop
+	mrmovl	(%edi), %eax	# get *src(%eax)
+    irmovl  $4, %ebx
+	addl	%ebx, %edi		# src++
+	rmmovl	%eax, (%esi)	# *dest = *src
+	addl	%ebx, %esi		# dest++
+	xorl	%eax, %ecx		# result ^= val
+    irmovl  $-1, %ebx
+	addl	%ebx, %edx		# len--
+	andl	%edx, %edx		# len > 0?
+	jg	L13					# continue when len > 0
+L15:						# return
+	rrmovl	%ecx, %eax		# set data to be return
+    popl    %edi			# restore %edi 
+    popl    %esi			# restore %esi 
+    rrmovl  %ebp, %esp	    # restore stack pointers
+	popl    %ebp
+	ret
+
+.pos 0x200
+Stack:

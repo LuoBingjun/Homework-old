@@ -1,0 +1,50 @@
+# 骆炳君 软件71 2017013573
+
+.pos 0
+# init
+irmovl Stack, %esp
+rrmovl %esp, %ebp
+irmovl ele1, %edx
+pushl %edx
+call rsum_list
+halt
+
+# Sample linked list
+.align 4
+ele1:
+	.long 0x00a
+	.long ele2
+ele2:
+	.long 0x0b0
+	.long ele3
+ele3:
+	.long 0xc00
+	.long 0
+
+rsum_list:
+    pushl   %ebp		    # set stack pointer
+	rrmovl  %esp, %ebp
+    mrmovl  8(%ebp), %edx	# get ls(%edx)
+    irmovl	$0, %eax		# set val(%eax) = 0
+	andl	%edx, %edx		# ls == 0?
+	jne	    L13				# continue when ls != 0
+	# return 0 when ls == 0
+    rrmovl  %ebp, %esp	    # restore stack pointer
+	popl    %ebp
+	ret
+L13:
+	pushl	%ebx			# save %ebx
+	rrmovl	%edx, %ebx
+	mrmovl	4(%edx), %edx	# get ls->next(%edx)
+    pushl   %edx			# push the parameter
+	call	rsum_list
+    popl    %edx			# pop the parameter
+    mrmovl  (%ebx), %ecx	# get ls->value(%ecx)
+	addl	%ecx, %eax		# get val + rest
+	popl	%ebx			# restore %ebx
+    rrmovl  %ebp, %esp	    # restore stack pointer
+	popl    %ebp
+	ret
+
+.pos 0x200
+Stack:
