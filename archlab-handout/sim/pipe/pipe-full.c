@@ -140,10 +140,9 @@ int gen_aluB()
         (I_MRMOVL) || (id_ex_curr->icode) == (I_ALU) || (id_ex_curr->icode)
          == (I_CALL) || (id_ex_curr->icode) == (I_PUSHL) || 
         (id_ex_curr->icode) == (I_RET) || (id_ex_curr->icode) == (I_POPL)
-         || (id_ex_curr->icode) == (I_IADDL) || (id_ex_curr->icode) == 
-        (I_LEAVE)) ? (id_ex_curr->valb) : ((id_ex_curr->icode) == 
-        (I_RRMOVL) || (id_ex_curr->icode) == (I_IRMOVL)) ? 0 : (
-        (id_ex_curr->icode) == (I_LEAVE)) ? 4 : 0);
+         || (id_ex_curr->icode) == (I_IADDL)) ? (id_ex_curr->valb) : (
+        (id_ex_curr->icode) == (I_RRMOVL) || (id_ex_curr->icode) == 
+        (I_IRMOVL)) ? 0 : ((id_ex_curr->icode) == (I_LEAVE)) ? 4 : 0);
 }
 
 int gen_alufun()

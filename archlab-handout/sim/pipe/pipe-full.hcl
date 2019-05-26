@@ -277,7 +277,7 @@ int aluA = [
 ## Select input B to ALU
 int aluB = [
 	E_icode in { IRMMOVL, IMRMOVL, IOPL, ICALL, 
-		     IPUSHL, IRET, IPOPL, IIADDL, ILEAVE } : E_valB;
+		     IPUSHL, IRET, IPOPL, IIADDL } : E_valB;
 	E_icode in { IRRMOVL, IIRMOVL } : 0;
 	E_icode in { ILEAVE } : 4;
 	# Other instructions don't need ALU
