@@ -1,0 +1,117 @@
+---
+title: "Homework 5"
+author: "Luo Bingjun 2017013573 Software 71"
+date: "2019/5/24"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Prob-1
+
+### a.
+by PC:
+
+```{R}
+library("stats")
+R=matrix(c(1,0.83,0.78,0.83,1,0.67,0.78,0.67,1), 3)
+respc <- princomp(covmat=R,cor = T,scores = T)
+res1 <- respc$loadings %*% diag(respc$sdev)
+L1 <- res1[,1]
+Phi1 <- diag(diag(R - L1 %*% t(L1)))
+L1
+Phi1
+```
+
+by MLE:
+```{R}
+res2 <- factanal(covmat=R,factors=1,rotation = 'varimax')
+L2 <- res2$loadings[1:3]
+Phi2 <- diag(res2$uniquenesses)
+L2
+Phi2
+```
+
+### b.
+Prefer PC, because the specific variances in PC are approximately less than those in MLE.
+
+### c.
+The specific variances:
+```{R}
+res2$uniquenesses
+```
+
+The communalities:
+```{R}
+L2^2
+```
+
+The proportion of variance explained by each factor:
+```{R}
+L2^2/3
+```
+
+The residual matrix:
+```{R}
+R - L2 %*% t(L2) - Phi2
+```
+
+## Prob-2 9.19
+```{R}
+data=read.table("T9-12.DAT")
+p=7
+Z=scale(data, center = TRUE, scale = TRUE)
+```
+
+### a.
+```{R}
+res2 <- factanal(Z,2,scores='regression')
+res2
+res3 <- factanal(Z,3,scores='regression')
+res3
+```
+
+### b.
+```{R}
+varimax(res2$loadings)
+varimax(res3$loadings)
+```
+
+### c.
+$m=2$:
+```{R}
+L2 <- res2$loadings[1:p]
+# estimated communalities:
+L2^2
+# specific variances:
+res2$uniquenesses
+# LL'+\psi:
+L2 %*% t(L2) + diag(res2$uniquenesses)
+```
+
+$m=2$:
+```{R}
+L3 <- res3$loadings[1:p]
+# estimated communalities:
+L3^2
+# specific variances:
+res3$uniquenesses
+# LL'+\psi:
+L3 %*% t(L3) + diag(res3$uniquenesses)
+```
+
+I prefer $m=3$, because it represents more variances.
+
+### e.
+```{R}
+x<-c(110,98,105,15,18,12,35)
+z=(x-colMeans(data))/diag(var(data))
+# weighted least squares method:
+
+# regression method:
+res3$scores
+```
