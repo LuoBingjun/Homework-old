@@ -1,0 +1,354 @@
+---
+title: "Homework 9"
+author: "Luo Bingjun 2017013573 Software 71"
+date: "2019/5/30"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+## KNNL 8.16
+```{R}
+n=120
+p=2
+data0 = read.table(file='CH01PR19.txt', header=F)
+data1 = read.table(file='CH08PR16.txt', header=F)
+data = cbind(data0, data1)
+colnames(data) <- c('Y', 'X1', 'X2')
+attach(data)
+```
+
+### a.
+$\beta_0$ is the common part of intercept of the regression lines.
+
+$\beta_1$ is the common slope of the regression lines.
+
+$\beta_2$ shows how much higher (or lower) the mean regression line is for the student who had chosen a major field of concentration than those who hadn't.
+
+### b.
+```{R}
+reg <- lm(Y~X1+X2)
+reg
+```
+
+$$Y=2.19842+0.03789X_1-0.09430X_2$$
+
+### c.
+$$H_0:\beta_2=0\leftrightarrow H_1:\beta_2\ne0$$
+
+Under $H_0$
+
+$$t=\frac{|\hat{\beta}_2|}{s_2}\sim t_{n-3}$$
+
+```{R}
+alpha=0.01
+summary(reg)
+qt(1-alpha/2,n-p-1)
+```
+
+We accept $H_0$ as $t=0.786<t_{117}(0.995)$, so $X_2$ cannot be dropped.
+
+### d.
+```{R}
+plot(X1*X2, reg$residuals)
+```
+
+There seems to be a linear tendency when $X_1\times X_2\ne0$, but not obvious enough.
+
+## KNNL 8.20
+### a.
+```{R}
+reg1 <- lm(Y~X1+X2+X1*X2)
+reg1
+```
+
+$$Y=3.226318-0.002757X_1-1.649577X_2+0.062245X_1X_2$$
+
+### b.
+$$H_0:\beta_3=0\leftrightarrow H_1:\beta_3\ne0$$
+
+Under $H_0$:
+
+$$t=\frac{|\hat{\beta_3}|}{s_3}\sim t_{n-4}$$
+
+```{R}
+summary(reg1)
+alpha=0.05
+qt(1-alpha/2, n-4)
+detach(data)
+```
+
+We reject $H_0$ as $t=2.350>t_{116}(0.975)$, so the interaction term cannot be dropped.
+
+## KNNL 9.9
+```{R}
+p=3
+data = read.table(file='CH06PR15.txt', header=F)
+n=nrow(data)
+colnames(data) <- c('Y', 'X1', 'X2', 'X3')
+attach(data)
+```
+
+### a.
+
+```{R}
+fullres <-  lm(Y ~ X1 + X2 + X3)$residuals
+sigsqhat.big <- sum(fullres^2)/(n-5)
+library(leaps)
+predictors = data[,c("X1", "X2", "X3")]
+response = Y
+leapSet = leaps(x=predictors, y=response, nbest = 3)
+models = leapSet$which
+colnames(models) = c("X1", "X2", "X3")
+m <- nrow(models)
+cp <- aic <- bic <- press <- adjrsquared <- rep(0,m)
+
+for( i in 1:m){
+  selectVarsIndex = leapSet$which[i,]
+  newData <- cbind(response, predictors[, selectVarsIndex])
+  newData <- as.data.frame(newData)
+  selectedMod <- lm(response ~ ., data=newData)  # build model
+  summary(selectedMod)
+  adjrsquared[i] <- summary(selectedMod)$adj.r.squared
+  aic[i] <- extractAIC(selectedMod)[2] #n*log(sum(fit$res^2)/n)+2*p
+  bic[i] <- extractAIC(selectedMod, k = log(n))[2]
+  press[i] <- sum((selectedMod$residuals/(1 - hatvalues(selectedMod)))^2)
+  cp[i] <- sum(selectedMod$residuals^2)/sigsqhat.big + 2 * selectedMod$rank - n
+}
+
+bestModels = cbind(adjrsquared, cp, aic, bic, press, models)
+bestModels
+```
+
+I would recommend $\{X_1,X_3\}$ as best, as is shown in Row 4 in the table.
+
+### b.
+Yes.
+
+This doesn't always happen because different criterias evaluate the regression based on different factors.
+
+### c.
+It saves a lot of computation resource, especially when the data is big.
+
+## KNNL 9.15
+```{R}
+detach(data)
+p=3
+data = read.table(file='CH09PR15.txt', header=F)
+n=nrow(data)
+colnames(data) <- c('Y', 'X1', 'X2', 'X3')
+attach(data)
+```
+
+### b.
+```{R}
+pairs(data, main = 'Scatter Plot Matrix')
+cor(data)
+```
+
+The plots suggest the relationship between $Y$ and each predictor variable seems to be linear.
+
+Not any serious multicollinearity problems are evident.
+
+### c.
+```{R}
+reg<-lm(Y~X1+X2+X3)
+summary(reg)
+```
+
+$$Y=120.0473-39.9393X_1-0.7368X_2+0.7764X_3$$
+
+Yes. 
+
+## KNNL 9.16
+### a.
+
+```{R}
+data1=cbind(data, X1^2, X2^2, X3^2,  X1*X2, X1*X3, X2*X3)
+predictors = data1[, 2:10]
+response = Y
+lp=leaps(x=predictors, y=response, wt=rep(1, NROW(data)), int=TRUE, method=c("Cp","adjr2"), nbest=3)
+lp
+```
+$$\{X_1,X_3,X_1^2,X_2^2,X_3^2,X_2X_3\}$$
+$$\{X_1,X_2,X_3,X_2^2,X_3^2,X_1X_2\}$$
+$$\{X_1,X_2,X_3,X_3^2,X_1X_2,X_1X_3\}$$
+
+### b.
+```{R}
+lp$Cp[16:18]
+```
+
+There is not much difference in $C_p$.
+
+## KNNL 9.19
+### a.
+```{R}
+subsets=regsubsets(x=predictors,y=response, nvmax = 4, really.big = T)
+summary(subsets)
+```
+
+The best subset of predictor variables is $\{x_1,x_2,x_3,x_1x_2\}$.
+
+### b.
+```{R}
+reg0 <- lm(Y~X1+X2+X3)
+reg1 <- lm(Y~X1+X2+X3+(X1*X2))
+summary(reg0)$adj.r.squared
+summary(reg1)$adj.r.squared
+```
+
+$R_{a,p}^2$ of the best subset here is greater than the one in 9.11a, so we can see that it is better than the subset in 9.11a.
+
+## KNNL 10.11
+```{R}
+detach(data)
+library(MASS)
+library(car)
+p=3
+data = read.table(file='CH06PR15.txt', header=F)
+n=nrow(data)
+colnames(data) <- c('Y', 'X1', 'X2', 'X3')
+attach(data)
+```
+
+### a.
+```{R}
+reg <- lm(Y~X1+X2+X3)
+sturesid = rstudent(reg)
+round(sturesid,  digits = 4)
+```
+
+```{R}
+outlierTest(reg, cutoff=0.1)
+```
+
+Samplpe 27 is most likely to be the outlier, but unadjusted p-value is less than 0.1, so we conclude that there is no outlier.
+
+### b.
+```{R}
+round(hatvalues(reg), digits=4)
+```
+
+There seems to be no outlier.
+
+### d.
+DFFITS:
+```{R}
+dffits(reg)[c(11,17,27)]
+```
+
+DFBETAS:
+```{R}
+dfbetas(reg)[c(11,17,27),]
+```
+
+Cook's distance:
+```{R}
+round(cooks.distance(reg), digits=4)[c(11,17,27)]
+```
+
+Case 17 is most likely to be the outlier.
+
+### e.
+
+
+### f.
+```{R}
+cooksdis=round(cooks.distance(reg), digits=4)
+plot(cooksdis)
+```
+
+Case 17, 31 and 27 are most influential in this measure.
+
+
+## KNNL 10.17
+### a.
+```{R}
+pairs(data)
+cor(data)
+```
+
+There seem to be linear associations among the predictor variables, especially between $X_2$ and $X_3$.
+
+### b.
+```{R}
+vif(reg)
+```
+
+There is excessive multicollinearity among $X_1$, $X_2$ and $X_3$.
+
+Results are more quantitative and revealing.
+
+## KNNL 10.21
+```{R}
+detach(data)
+p=3
+data = read.table(file='CH09PR15.txt', header=F)
+n=nrow(data)
+colnames(data) <- c('Y', 'X1', 'X2', 'X3')
+attach(data)
+```
+
+### a.
+```{R}
+reg<-lm(Y~X1+X2+X3)
+vif(reg)
+```
+
+There are serious multicollinearity problems because the average VIF is considerably larger than 1.
+
+### b.
+```{R}
+res=reg$residuals
+fit=reg$fitted.values
+plot(fit, res)
+plot(X1, res)
+plot(X2, res)
+plot(X3, res)
+qqnorm(res)
+qqline(res)
+```
+
+### c.
+```{R}
+avPlots(reg)
+```
+
+### d.
+Yes, they suggest that the model should be modified to avoid multicollinearity.
+
+## KNNL 10.22
+### a.
+```{R}
+reg<-lm(log(Y)~log(X1)+log(140-X2)+log(X3))
+reg
+```
+
+### b.
+```{R}
+res=reg$residuals
+fitted=reg$fitted.values
+plot(fitted, res)
+qqnorm(res)
+qqline(res)
+```
+
+### c.
+```{R}
+vif(reg)
+```
+
+Serious multicollearity problems are still here because the average VIF is considerably larger than 1.
+
+### d.
+```{R}
+sturesid = rstudent(reg)
+round(sturesid,  digits = 4)
+```
+
+```{R}
+outlierTest(reg, cutoff=0.1)
+```
+
+Case 29 is most likely to be the outlier, but its p-value is still less than 0.1, so we conclude that there is no outlier.

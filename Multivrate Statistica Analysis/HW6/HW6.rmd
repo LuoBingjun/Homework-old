@@ -1,0 +1,37 @@
+---
+title: "Homework 6"
+author: "Luo Bingjun 2017013573 Software 71"
+date: "2019-06-07"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+## 11.4
+### a.
+assign $x$ to $\pi_1$ if
+$$\frac{f_1(x)}{f_2(x)}\ge(\frac{c(1|2)}{c(2|1)})(\frac{p_2}{p_1})=0.5$$
+
+assign $x$ to $\pi_2$ if
+$$\frac{f_1(x)}{f_2(x)}<(\frac{c(1|2)}{c(2|1)})(\frac{p_2}{p_1})=0.5$$
+
+### b.
+$$\because \frac{f_1(x)}{f_2(x)}=0.6>0.5$$
+$$\therefore \text{assign x to } \pi_1$$
+
+## 11.14
+in (11-21)
+$$\hat{a}^*=\frac{\hat{a}}{\sqrt{\hat{a}'\hat{a}}}=(0.7927,-0.609)'$$
+
+$$m_1^*=\frac{1}{2}\hat{a}^*(\bar{x}_1+\bar{x}_2)=-0.09709$$
+
+Since $\hat{y}_0^*=\hat{a}^*x_0=-0.139671<m_1^*$, we classify $x_0$ to $\pi_2$.
+
+in (11-22)
+$$\hat{a}^*=\frac{\hat{a}}{\hat{a}_1}=(1,-0.768)'$$
+
+$$m_2^*=\frac{1}{2}\hat{a}^*(\bar{x}_1+\bar{x}_2)=-0.12248$$
+
+Since $\hat{y}_0^*=\hat{a}^*x_0=0.17628<m_2^*$, we classify $x_0$ to $\pi_2$.
+
+The results are consistent with the classification in 11.3. They should be because there are only linear transformations which do not change the result.
