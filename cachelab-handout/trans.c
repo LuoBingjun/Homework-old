@@ -1,3 +1,4 @@
+// 骆炳君 软件71 2017013573
 /* 
  * trans.c - Matrix transpose B = A^T
  *
@@ -6,11 +7,13 @@
  *
  * A transpose function is evaluated by counting the number of misses
  * on a 1KB direct mapped cache with a block size of 32 bytes.
- */ 
+ */
+
 #include <stdio.h>
 #include "cachelab.h"
 
 int is_transpose(int M, int N, int A[N][M], int B[M][N]);
+void trans(int M, int N, int A[N][M], int B[M][N]);
 
 /* 
  * transpose_submit - This is the solution transpose function that you
@@ -22,12 +25,128 @@ int is_transpose(int M, int N, int A[N][M], int B[M][N]);
 char transpose_submit_desc[] = "Transpose submission";
 void transpose_submit(int M, int N, int A[N][M], int B[M][N])
 {
+    int tmp, r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10;
+    // FILE *fp = fopen("demo.txt", "a+");
+    // fprintf(fp, "%p", &A[0][1]);
+    if (M == 32 && N == 32)
+    {
+        for (r0 = 0; r0 < M / 8; r0++)
+        {
+            for (r1 = 0; r1 < N / 8; r1++)
+            {
+                for (r2 = 0; r2 < 8; r2++)
+                {
+                    for (r3 = 0; r3 < 8; r3++)
+                    {
+                        if (r0 * 8 + r2 != r1 * 8 + r3)
+                        {
+                            tmp = A[r0 * 8 + r2][r1 * 8 + r3];
+                            B[r1 * 8 + r3][r0 * 8 + r2] = tmp;
+                        }
+                    }
+                    if (r0 == r1)
+                    {
+                        tmp = A[r0 * 8 + r2][r0 * 8 + r2];
+                        B[r0 * 8 + r2][r0 * 8 + r2] = tmp;
+                    }
+                }
+            }
+        }
+    }
+    else if (M == 64 && N == 64)
+    {
+        for (r0 = 0; r0 < 64; r0 += 8)
+        {
+            for (r1 = 0; r1 < 64; r1 += 8)
+            {
+                for (r2 = r0; r2 < r0 + 4; r2++)
+                {
+                    r3 = A[r2][r1];
+                    r4 = A[r2][r1 + 1];
+                    r5 = A[r2][r1 + 2];
+                    r6 = A[r2][r1 + 3];
+                    r7 = A[r2][r1 + 4];
+                    r8 = A[r2][r1 + 5];
+                    r9 = A[r2][r1 + 6];
+                    r10 = A[r2][r1 + 7];
+                    B[r1][r2] = r3;
+                    B[r1][r2 + 4] = r7;
+                    B[r1 + 1][r2] = r4;
+                    B[r1 + 1][r2 + 4] = r8;
+                    B[r1 + 2][r2] = r5;
+                    B[r1 + 2][r2 + 4] = r9;
+                    B[r1 + 3][r2] = r6;
+                    B[r1 + 3][r2 + 4] = r10;
+                }
+
+                for (r2 = r0 + 4; r2 < r0 + 8; r2++)
+                {
+                    r3 = A[r2][r1];
+                    r4 = A[r2][r1 + 1];
+                    r5 = A[r2][r1 + 2];
+                    r6 = A[r2][r1 + 3];
+                    r7 = A[r2][r1 + 4];
+                    r8 = A[r2][r1 + 5];
+                    r9 = A[r2][r1 + 6];
+                    r10 = A[r2][r1 + 7];
+                    B[r1 + 4][r2] = r7;
+                    B[r1 + 4][r2 - 4] = r3;
+                    B[r1 + 5][r2] = r8;
+                    B[r1 + 5][r2 - 4] = r4;
+                    B[r1 + 6][r2] = r9;
+                    B[r1 + 6][r2 - 4] = r5;
+                    B[r1 + 7][r2] = r10;
+                    B[r1 + 7][r2 - 4] = r6;
+                }
+
+                for (r2 = 0; r2 < 4; r2++)
+                {
+                    r3 = B[r1 + r2][r0 + 4];
+                    r4 = B[r1 + r2][r0 + 5];
+                    r5 = B[r1 + r2][r0 + 6];
+                    r6 = B[r1 + r2][r0 + 7];
+                    B[r1 + r2][r0 + 4] = B[r1 + r2 + 4][r0 + 0];
+                    B[r1 + r2][r0 + 5] = B[r1 + r2 + 4][r0 + 1];
+                    B[r1 + r2][r0 + 6] = B[r1 + r2 + 4][r0 + 2];
+                    B[r1 + r2][r0 + 7] = B[r1 + r2 + 4][r0 + 3];
+                    B[r1 + r2 + 4][r0 + 0] = r3;
+                    B[r1 + r2 + 4][r0 + 1] = r4;
+                    B[r1 + r2 + 4][r0 + 2] = r5;
+                    B[r1 + r2 + 4][r0 + 3] = r6;
+                }
+            }
+        }
+    }
+    else if (M == 61 && N == 67)
+    {
+        for (r0 = 0; r0 < N; r0 += 17)
+        {
+            for (r1 = 0; r1 < M; r1 += 17)
+            {
+                for (r2 = r0; (r2 < r0 + 17) && (r2 < N); r2++)
+                {
+                    for (r3 = r1; (r3 < r1 + 17) && (r3 < M); r3++)
+                    {
+                        tmp = A[r2][r3];
+                        B[r3][r2] = tmp;
+                    }
+                }
+            }
+        }
+    }
+    else if (M == 48 && N == 48)
+    {
+    }
+    else
+    {
+        trans(M, N, A, B);
+    }
 }
 
 /* 
  * You can define additional transpose functions below. We've defined
  * a simple one below to help you get started. 
- */ 
+ */
 
 /* 
  * trans - A simple baseline transpose function, not optimized for the cache.
@@ -37,13 +156,14 @@ void trans(int M, int N, int A[N][M], int B[M][N])
 {
     int i, j, tmp;
 
-    for (i = 0; i < N; i++) {
-        for (j = 0; j < M; j++) {
+    for (i = 0; i < N; i++)
+    {
+        for (j = 0; j < M; j++)
+        {
             tmp = A[i][j];
             B[j][i] = tmp;
         }
-    }    
-
+    }
 }
 
 /*
@@ -56,11 +176,10 @@ void trans(int M, int N, int A[N][M], int B[M][N])
 void registerFunctions()
 {
     /* Register your solution function */
-    registerTransFunction(transpose_submit, transpose_submit_desc); 
+    registerTransFunction(transpose_submit, transpose_submit_desc);
 
     /* Register any additional transpose functions */
-    registerTransFunction(trans, trans_desc); 
-
+    registerTransFunction(trans, trans_desc);
 }
 
 /* 
@@ -72,13 +191,15 @@ int is_transpose(int M, int N, int A[N][M], int B[M][N])
 {
     int i, j;
 
-    for (i = 0; i < N; i++) {
-        for (j = 0; j < M; ++j) {
-            if (A[i][j] != B[j][i]) {
+    for (i = 0; i < N; i++)
+    {
+        for (j = 0; j < M; ++j)
+        {
+            if (A[i][j] != B[j][i])
+            {
                 return 0;
             }
         }
     }
     return 1;
 }
-
