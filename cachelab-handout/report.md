@@ -9,26 +9,32 @@
 ## Part A
 
 ### initCache()
-Malloc memory for the cache and initiate it with 0
+为缓存池开辟内存空间并初始化为0.
 
 ### showHelp()
-Print help message.
+显示帮助界面.
 
 ### searchCache(unsigned long long addr)
-Search in the cache for certain address addr, and load it if it is missed
+在缓存中搜索指定地址addr处的数据，如果未命中则加载它.
 
 ### sim()
-Read .trace file and simulate cache operations line by line
+逐行读取.trace文件并模拟缓存的读写过程.
 
 ### main(int argc, char *argv[])
-Execute csim and analyze the arguments
+程序入口
 
 ## Part B
 
+因为s=5, E=1, b=5, 整个缓存有$2^5=32$个块且每个块存有$2^5=32$字节，也就是8个int型变量的数据.
+
 ### 32*32
+32\*32矩阵的一行有4个缓存块，相邻的8行刚好能占据整个缓存空间，所以把矩阵分成8*8的子块进行转置。但是这样依然不能达到要求，主要是因为A、B对角线上的块对应了缓存上的同一区域，在读A、写B的过程中会出现交替的未命中情况，从而增加miss数量。针对对角线上的元素进行特殊处理，在每一行结束时才更新对角线元素，可以明显减少miss数量，达到题目要求。
+
 
 ### 64*64
 
 ### 61*67
+由于该矩阵不是方阵，针对A优化的算法可能并不适用于B，反之亦然. 所以使用与32*32类似的分块方法进行优化，并对分块的尺寸进行测试，发现在分块大小为17时的miss数量最小且能达到题目要求.
 
 ### 48*48
+

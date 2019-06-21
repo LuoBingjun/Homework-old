@@ -55,9 +55,9 @@ void transpose_submit(int M, int N, int A[N][M], int B[M][N])
     }
     else if (M == 64 && N == 64)
     {
-        for (r0 = 0; r0 < N; r0 += 8)
+        for (r0 = 0; r0 < 64; r0 += 8)
         {
-            for (r1 = 0; r1 < M; r1 += 8)
+            for (r1 = 0; r1 < 64; r1 += 8)
             {
                 for (r2 = r0; r2 < r0 + 4; r2++)
                 {
@@ -69,42 +69,50 @@ void transpose_submit(int M, int N, int A[N][M], int B[M][N])
                     r8 = A[r2][r1 + 5];
                     r9 = A[r2][r1 + 6];
                     r10 = A[r2][r1 + 7];
-
                     B[r1][r2] = r3;
+                    B[r1][r2 + 4] = r7;
                     B[r1 + 1][r2] = r4;
+                    B[r1 + 1][r2 + 4] = r8;
                     B[r1 + 2][r2] = r5;
+                    B[r1 + 2][r2 + 4] = r9;
                     B[r1 + 3][r2] = r6;
-                    B[r1 + 3][r2 + 4] = r7;
-                    B[r1 + 2][r2 + 4] = r8;
-                    B[r1 + 1][r2 + 4] = r9;
-                    B[r1][r2 + 4] = r10;
+                    B[r1 + 3][r2 + 4] = r10;
+                }
+
+                for (r2 = r0 + 4; r2 < r0 + 8; r2++)
+                {
+                    r3 = A[r2][r1];
+                    r4 = A[r2][r1 + 1];
+                    r5 = A[r2][r1 + 2];
+                    r6 = A[r2][r1 + 3];
+                    r7 = A[r2][r1 + 4];
+                    r8 = A[r2][r1 + 5];
+                    r9 = A[r2][r1 + 6];
+                    r10 = A[r2][r1 + 7];
+                    B[r1 + 4][r2] = r7;
+                    B[r1 + 4][r2 - 4] = r3;
+                    B[r1 + 5][r2] = r8;
+                    B[r1 + 5][r2 - 4] = r4;
+                    B[r1 + 6][r2] = r9;
+                    B[r1 + 6][r2 - 4] = r5;
+                    B[r1 + 7][r2] = r10;
+                    B[r1 + 7][r2 - 4] = r6;
                 }
 
                 for (r2 = 0; r2 < 4; r2++)
                 {
-                    r3 = A[r0 + 4][r1 + r2];
-                    r4 = A[r0 + 5][r1 + r2];
-                    r5 = A[r0 + 6][r1 + r2];
-                    r6 = A[r0 + 7][r1 + r2];
-                    r7 = A[r0 + 4][r1 + 7 - r2];
-                    r8 = A[r0 + 5][r1 + 7 - r2];
-                    r9 = A[r0 + 6][r1 + 7 - r2];
-                    r10 = A[r0 + 7][r1 + 7 - r2];
-
-                    B[r1 + 7 - r2][r0] = B[r1 + r2][r0 + 4];
-                    B[r1 + 7 - r2][r0 + 1] = B[r1 + r2][r0 + 5];
-                    B[r1 + 7 - r2][r0 + 2] = B[r1 + r2][r0 + 6];
-                    B[r1 + 7 - r2][r0 + 3] = B[r1 + r2][r0 + 7];
-
-                    B[r1 + r2][r0 + 4] = r3;
-                    B[r1 + r2][r0 + 5] = r4;
-                    B[r1 + r2][r0 + 6] = r5;
-                    B[r1 + r2][r0 + 7] = r6;
-
-                    B[r1 + 7 - r2][r0 + 4] = r7;
-                    B[r1 + 7 - r2][r0 + 5] = r8;
-                    B[r1 + 7 - r2][r0 + 6] = r9;
-                    B[r1 + 7 - r2][r0 + 7] = r10;
+                    r3 = B[r1 + r2][r0 + 4];
+                    r4 = B[r1 + r2][r0 + 5];
+                    r5 = B[r1 + r2][r0 + 6];
+                    r6 = B[r1 + r2][r0 + 7];
+                    B[r1 + r2][r0 + 4] = B[r1 + r2 + 4][r0 + 0];
+                    B[r1 + r2][r0 + 5] = B[r1 + r2 + 4][r0 + 1];
+                    B[r1 + r2][r0 + 6] = B[r1 + r2 + 4][r0 + 2];
+                    B[r1 + r2][r0 + 7] = B[r1 + r2 + 4][r0 + 3];
+                    B[r1 + r2 + 4][r0 + 0] = r3;
+                    B[r1 + r2 + 4][r0 + 1] = r4;
+                    B[r1 + r2 + 4][r0 + 2] = r5;
+                    B[r1 + r2 + 4][r0 + 3] = r6;
                 }
             }
         }
@@ -115,20 +123,12 @@ void transpose_submit(int M, int N, int A[N][M], int B[M][N])
         {
             for (r1 = 0; r1 < M; r1 += 17)
             {
-                for (r2 = r0; r2 < N && r2 < r0 + 17; r2++)
+                for (r2 = r0; (r2 < r0 + 17) && (r2 < N); r2++)
                 {
-                    for (r3 = r1; r3 < M && r3 < r1 + 17; r3++)
+                    for (r3 = r1; (r3 < r1 + 17) && (r3 < M); r3++)
                     {
-                        if (r2 != r3)
-                        {
-                            tmp = A[r2][r3];
-                            B[r3][r2] = tmp;
-                        }
-                    }
-                    if (r0 == r1)
-                    {
-                        tmp = A[r2][r2];
-                        B[r2][r2] = tmp;
+                        tmp = A[r2][r3];
+                        B[r3][r2] = tmp;
                     }
                 }
             }
@@ -136,42 +136,6 @@ void transpose_submit(int M, int N, int A[N][M], int B[M][N])
     }
     else if (M == 48 && N == 48)
     {
-        for (r0 = 0; r0 < N; r0 += 8)
-        {
-            for (r1 = 0; r1 < M; r1 += 8)
-            {
-                for (r2 = 0; r2 < 8; r2++)
-                {
-                    r3 = A[r0 + r2][r1];
-                    r4 = A[r0 + r2][r1 + 1];
-                    r5 = A[r0 + r2][r1 + 2];
-                    r6 = A[r0 + r2][r1 + 3];
-                    r7 = A[r0 + r2][r1 + 4];
-                    r8 = A[r0 + r2][r1 + 5];
-                    r9 = A[r0 + r2][r1 + 6];
-                    r10 = A[r0 + r2][r1 + 7];
-
-                    B[r1 + r2][r0] = r3;
-                    B[r1 + r2][r0 + 1] = r4;
-                    B[r1 + r2][r0 + 2] = r5;
-                    B[r1 + r2][r0 + 3] = r6;
-                    B[r1 + r2][r0 + 4] = r7;
-                    B[r1 + r2][r0 + 5] = r8;
-                    B[r1 + r2][r0 + 6] = r9;
-                    B[r1 + r2][r0 + 7] = r10;
-                }
-
-                for (r2 = 0; r2 < 8; r2++)
-                {
-                    for (r3 = r2 + 1; r3 < 8; r3++)
-                    {
-                        tmp = B[r1 + r3][r0 + r2];
-                        B[r1 + r3][r0 + r2] = B[r1 + r2][r0 + r3];
-                        B[r1 + r2][r0 + r3] = tmp;
-                    }
-                }
-            }
-        }
     }
     else
     {
