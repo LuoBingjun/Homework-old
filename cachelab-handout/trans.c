@@ -30,6 +30,7 @@ void transpose_submit(int M, int N, int A[N][M], int B[M][N])
     // fprintf(fp, "%p", &A[0][1]);
     if (M == 32 && N == 32)
     {
+        // 分为8*8的块
         for (r0 = 0; r0 < M / 8; r0++)
         {
             for (r1 = 0; r1 < N / 8; r1++)
@@ -44,6 +45,7 @@ void transpose_submit(int M, int N, int A[N][M], int B[M][N])
                             B[r1 * 8 + r3][r0 * 8 + r2] = tmp;
                         }
                     }
+                    // 单独处理对角线元素
                     if (r0 == r1)
                     {
                         tmp = A[r0 * 8 + r2][r0 * 8 + r2];
@@ -55,12 +57,14 @@ void transpose_submit(int M, int N, int A[N][M], int B[M][N])
     }
     else if (M == 64 && N == 64)
     {
+        // 分成8*8的块
         for (r0 = 0; r0 < N; r0 += 8)
         {
             for (r1 = 0; r1 < M; r1 += 8)
             {
                 for (r2 = r0; r2 < r0 + 4; r2++)
                 {
+                    // 逐行读A'的上半部分
                     r3 = A[r2][r1];
                     r4 = A[r2][r1 + 1];
                     r5 = A[r2][r1 + 2];
@@ -70,10 +74,13 @@ void transpose_submit(int M, int N, int A[N][M], int B[M][N])
                     r9 = A[r2][r1 + 6];
                     r10 = A[r2][r1 + 7];
 
+                    // B'的左上部分直接存储转置结果
                     B[r1][r2] = r3;
                     B[r1 + 1][r2] = r4;
                     B[r1 + 2][r2] = r5;
                     B[r1 + 3][r2] = r6;
+
+                    // B'的右上部分临时存储左下部分的数据
                     B[r1 + 3][r2 + 4] = r7;
                     B[r1 + 2][r2 + 4] = r8;
                     B[r1 + 1][r2 + 4] = r9;
@@ -82,6 +89,7 @@ void transpose_submit(int M, int N, int A[N][M], int B[M][N])
 
                 for (r2 = 0; r2 < 4; r2++)
                 {
+                    // 从两侧到中间按列读取A'的下半部分
                     r3 = A[r0 + 4][r1 + r2];
                     r4 = A[r0 + 5][r1 + r2];
                     r5 = A[r0 + 6][r1 + r2];
@@ -91,16 +99,19 @@ void transpose_submit(int M, int N, int A[N][M], int B[M][N])
                     r9 = A[r0 + 6][r1 + 7 - r2];
                     r10 = A[r0 + 7][r1 + 7 - r2];
 
+                    // 把B'右上部分暂存的数据转移到左下部分
                     B[r1 + 7 - r2][r0] = B[r1 + r2][r0 + 4];
                     B[r1 + 7 - r2][r0 + 1] = B[r1 + r2][r0 + 5];
                     B[r1 + 7 - r2][r0 + 2] = B[r1 + r2][r0 + 6];
                     B[r1 + 7 - r2][r0 + 3] = B[r1 + r2][r0 + 7];
 
+                    // B'左上部分写入正确数据
                     B[r1 + r2][r0 + 4] = r3;
                     B[r1 + r2][r0 + 5] = r4;
                     B[r1 + r2][r0 + 6] = r5;
                     B[r1 + r2][r0 + 7] = r6;
 
+                    // B'右下部份直接存储转置结果
                     B[r1 + 7 - r2][r0 + 4] = r7;
                     B[r1 + 7 - r2][r0 + 5] = r8;
                     B[r1 + 7 - r2][r0 + 6] = r9;
@@ -111,6 +122,7 @@ void transpose_submit(int M, int N, int A[N][M], int B[M][N])
     }
     else if (M == 61 && N == 67)
     {
+        // 分为17*17的块
         for (r0 = 0; r0 < N; r0 += 17)
         {
             for (r1 = 0; r1 < M; r1 += 17)
@@ -125,6 +137,7 @@ void transpose_submit(int M, int N, int A[N][M], int B[M][N])
                             B[r3][r2] = tmp;
                         }
                     }
+                    // 单独处理对角线元素
                     if (r0 == r1)
                     {
                         tmp = A[r2][r2];
@@ -136,10 +149,12 @@ void transpose_submit(int M, int N, int A[N][M], int B[M][N])
     }
     else if (M == 48 && N == 48)
     {
+        // 分为8*8的块
         for (r0 = 0; r0 < N; r0 += 8)
         {
             for (r1 = 0; r1 < M; r1 += 8)
             {
+                // 逐行复制
                 for (r2 = 0; r2 < 8; r2++)
                 {
                     r3 = A[r0 + r2][r1];
@@ -161,6 +176,7 @@ void transpose_submit(int M, int N, int A[N][M], int B[M][N])
                     B[r1 + r2][r0 + 7] = r10;
                 }
 
+                // 在B中进行转置
                 for (r2 = 0; r2 < 8; r2++)
                 {
                     for (r3 = r2 + 1; r3 < 8; r3++)
