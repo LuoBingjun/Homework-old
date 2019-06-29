@@ -1,0 +1,151 @@
+---
+title: "大作业报告"
+author: "骆炳君 2017013573 软件71"
+date: "2019/6/28"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+rawdata <- read.table('Europrotein.dat',header = TRUE,sep = ':')
+data<-rawdata
+rownames(data) <- data$Country
+data<-subset(data, select = -Country)
+```
+
+## 背景描述
+EEC（欧洲经济共同体）和COMECON（经济互助委员会）是冷战时期欧洲最主要的两大经济合作组织，涵盖了苏联、英国、法国、德国等大多数欧洲经济体。
+
+本研究将利用EEC和COMECON国家的蛋白质摄入量数据，分析不同种类的蛋白质摄入量间的关系，并找出两大经济合作组织在蛋白质摄入上的差异。
+
+## 数据
+
+### 介绍
+本研究使用的Europe Protein consumption数据集，记录了25个主要欧洲国家对肉、蛋、奶、鱼等9种类型的蛋白质摄入量情况，其中包括16个EEC国家和9个COMECON国家。由于Country项在本研究中没有意义，因此将此列仅作为数据标签。
+
+```{r tables-mtcars, echo=FALSE}
+knitr::kable(data[1:4, ], caption = '数据集概览')
+```
+
+### EDA
+进行探索性数据分析，首先得到下面的分析图：
+
+```{r, echo=FALSE, results='hide', message=FALSE, warning=FALSE, error=FALSE}
+library("ggplot2")
+library("GGally")
+ggpairs(data)
+```
+
+观察上图，可以初步得出以下结论：
+
+- 红肉与奶，蛋与红肉、白肉、奶，坚果与谷物的摄入量存在着较强的正相关关系，谷物与蛋、奶、鱼、淀粉，坚果与白肉、蛋、奶的摄入量间存在着较强的负相关关系，蔬果与其他种类食品的摄入量都没有明显的相关关系。
+- EEC国家的红肉、蛋、奶、鱼的摄入量显著高于COMECON国家，COMECON国家的谷物、坚果的摄入量显著高于EEC国家，EEC国家的蔬果摄入量的方差显著大于COMECON国家的蔬果摄入量。
+
+### 预处理
+```{r, echo=FALSE, results='hide'}
+data$Economy=as.numeric(data$Economy)
+data=scale(data)
+R=cor(data)
+```
+
+对数据进行初步处理，对Economy项进行数值化（C对应1，E对应2），同时求出数据集的相关系数矩阵，以方便后续的研究。
+
+## 建模
+
+### 因子分析
+首先确定要保留的因子数量：
+
+```{r, echo=FALSE , message=FALSE, warning=FALSE, error=FALSE}
+library("psych")
+fa.parallel(R, n.obs = 25, fa = "both")
+```
+
+根据碎石图可以得出，只需保留两个因子即可。使用最大似然方法进行因子分析，得到下述结果：
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE, error=FALSE}
+fa_model <- fa(R, cor=TRUE, nfactors = 2,rotate = "none", fm = "ml")
+fa_model$loadings
+```
+
+结果将数据分解为ML2和ML1两个因子，共同解释了约55%的方差，因子分解的效果有一定可靠性。
+
+```{r, echo=FALSE}
+fa.diagram(fa_model, simple = FALSE)
+```
+
+观察分解结果，可发现ML2是与蛋、奶、肉摄入量有关的因子，而ML1则是与鱼摄入量有关的因子，除此之外的谷物、经济体和淀粉是两者共有的因子，蔬果摄入量则与两个因子关系都不大。同时可以发现，两个最主要的因子都与Economy正相关，由此可猜测EEC国家的蛋白质摄入量总体上大于COMECON国家。
+
+### 聚类分析
+聚类分析试图按照各种蛋白质的摄入量对样本中的欧洲国家进行分类，同时验证EEC国家与COMECON国家的蛋白质摄入量之间是否存在显著差异，因此我们首先将数据中的Economy列删去，然后进行聚类，再将聚类结果与原有数据进行比较。
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE, error=FALSE}
+data_nonecon<-subset(data, select = -Economy)
+```
+
+首先确定最优聚类数目，同样使用碎石图：
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE, error=FALSE}
+library(factoextra)
+fviz_nbclust(data_nonecon, kmeans, method = "wss")
+```
+
+取聚类数为5，采用K-means算法进行聚类操作，可得以下结果：
+```{r, echo=FALSE, message=FALSE, warning=FALSE, error=FALSE}
+km <- kmeans(data_nonecon, 5, nstart = 25)
+fviz_cluster(km, data = data_nonecon,
+             ellipse.type = "euclid",
+             star.plot = TRUE, 
+             repel = TRUE,
+             ggtheme = theme_minimal()
+)
+```
+
+结合相关地理知识可知，类1包括了芬兰、挪威等北欧国家，类2包括了英国、德国、法国等主要的中西欧国家，类3包括了苏联、杰克、波兰等东欧国家，类4包括了罗马尼亚、南斯拉夫等巴尔干半岛国家，类5则是希腊、意大利等地中海国家。由聚类结果可知，地理环境是决定蛋白质摄入结构的主要原因，在排除EEC和COMECON国家分布上本身具有的地理因素外，可认为两种经济合作组织国家的蛋白质摄入结构没有显著差异。
+
+## 结论
+1. 地理环境是决定蛋白质摄入结构的主要因素，可根据不同的地理位置将欧洲国家大致分为北欧、东欧、巴尔干半岛、地中海沿岸和中西欧（或其他）5个地理分区，不同分区间的蛋白质摄入结构存在着较大差异。
+2. 在蛋白质总摄入量中，可将蛋、奶、肉归为一类，它们之间存在着较强的正相关关系，并与其他种类存在着一定的负相关关系（因为比例总量一定），蔬果的摄入量与其他各类食品均无明显的相关性。
+3. 在排除地理因素的差异后，不同经济合作组织的国家间不存在显著的蛋白质摄入结构差异。
+
+
+## 附录
+
+```
+# 数据读取与预处理
+rawdata <- read.table('Europrotein.dat',header = TRUE,sep = ':')
+data<-rawdata
+rownames(data) <- data$Country
+data<-subset(data, select = -Country)
+data$Economy=as.numeric(data$Economy)
+data=scale(data)
+R=cor(data)
+
+# EDA
+library("ggplot2")
+library("GGally")
+ggpairs(data)
+
+# 因子分析
+library("psych")
+fa.parallel(R, n.obs = 25, fa = "both")
+
+fa_model <- fa(R, cor=TRUE, nfactors = 2,rotate = "none", fm = "ml")
+fa_model$loadings
+
+fa.diagram(fa_model, simple = FALSE)
+
+# 聚类分析
+data_nonecon<-subset(data, select = -Economy)
+
+library(factoextra)
+fviz_nbclust(data_nonecon, kmeans, method = "wss")
+
+km <- kmeans(data_nonecon, 5, nstart = 25)
+fviz_cluster(km, data = data_nonecon,
+             ellipse.type = "euclid",
+             star.plot = TRUE, 
+             repel = TRUE,
+             ggtheme = theme_minimal()
+)
+```

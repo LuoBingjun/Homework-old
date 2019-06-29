@@ -1,0 +1,225 @@
+\documentclass[]{article}
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\usepackage{fixltx2e} % provides \textsubscript
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+\else % if luatex or xelatex
+  \ifxetex
+    \usepackage{mathspec}
+  \else
+    \usepackage{fontspec}
+  \fi
+  \defaultfontfeatures{Ligatures=TeX,Scale=MatchLowercase}
+\fi
+% use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+% use microtype if available
+\IfFileExists{microtype.sty}{%
+\usepackage{microtype}
+\UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\usepackage[margin=1in]{geometry}
+\usepackage{hyperref}
+\hypersetup{unicode=true,
+            pdftitle={大作业报告},
+            pdfauthor={骆炳君 2017013573 软件71},
+            pdfborder={0 0 0},
+            breaklinks=true}
+\urlstyle{same}  % don't use monospace font for urls
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\usepackage{longtable,booktabs}
+\usepackage{graphicx,grffile}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+\IfFileExists{parskip.sty}{%
+\usepackage{parskip}
+}{% else
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt plus 2pt minus 1pt}
+}
+\setlength{\emergencystretch}{3em}  % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{0}
+% Redefines (sub)paragraphs to behave more like sections
+\ifx\paragraph\undefined\else
+\let\oldparagraph\paragraph
+\renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+\let\oldsubparagraph\subparagraph
+\renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+
+%%% Use protect on footnotes to avoid problems with footnotes in titles
+\let\rmarkdownfootnote\footnote%
+\def\footnote{\protect\rmarkdownfootnote}
+
+%%% Change title format to be more compact
+\usepackage{titling}
+
+% Create subtitle command for use in maketitle
+\providecommand{\subtitle}[1]{
+  \posttitle{
+    \begin{center}\large#1\end{center}
+    }
+}
+
+\setlength{\droptitle}{-2em}
+
+  \title{大作业报告}
+    \pretitle{\vspace{\droptitle}\centering\huge}
+  \posttitle{\par}
+    \author{骆炳君 2017013573 软件71}
+    \preauthor{\centering\large\emph}
+  \postauthor{\par}
+      \predate{\centering\large\emph}
+  \postdate{\par}
+    \date{2019/6/28}
+
+
+\begin{document}
+\maketitle
+
+\subsection{背景描述}
+
+EEC（欧洲经济共同体）和COMECON（经济互助委员会）是冷战时期欧洲最主要的两大经济合作组织，涵盖了苏联、英国、法国、东德、西德等大多数欧洲经济体。
+
+本研究将利用EEC和COMECON国家的蛋白质消费量数据，分析不同种类的蛋白质消费量间的关系，并找出两大经济合作组织在蛋白质消费上的差异。
+
+\subsection{数据}
+
+\subsubsection{介绍}
+
+本研究使用的Europe Protein
+consumption数据集，记录了25个主要欧洲国家对肉、蛋、奶、鱼等9种类型的蛋白质消费量情况，其中包括16个EEC国家和9个COMECON国家。由于Country项在本研究中没有意义，因此不考虑本列数据。
+
+\begin{longtable}[]{@{}llrrrrrrrrr@{}}
+\caption{数据集概览}\tabularnewline
+\toprule
+Economy & Country & RedMeat & WhiteMeat & Eggs & Milk & Fish & Cereals &
+Starch & Nuts & Fr.Veg\tabularnewline
+\midrule
+\endfirsthead
+\toprule
+Economy & Country & RedMeat & WhiteMeat & Eggs & Milk & Fish & Cereals &
+Starch & Nuts & Fr.Veg\tabularnewline
+\midrule
+\endhead
+C & Albania & 10.1 & 1.4 & 0.5 & 8.9 & 0.2 & 42.3 & 0.6 & 5.5 &
+1.7\tabularnewline
+E & Austria & 8.9 & 14.0 & 4.3 & 19.9 & 2.1 & 28.0 & 3.6 & 1.3 &
+4.3\tabularnewline
+\bottomrule
+\end{longtable}
+
+\hypertarget{eda}{%
+\subsubsection{EDA}\label{eda}}
+
+进行探索性数据分析，首先得到下面的分析图：
+
+观察上图，可以初步得出以下结论：
+
+\begin{itemize}
+\tightlist
+\item
+  红肉与奶，蛋与红肉、白肉、奶，坚果与谷物的消费量存在着较强的正相关关系，谷物与蛋、奶、鱼、淀粉，坚果与白肉、蛋、奶的消费量间存在着较强的负相关关系，蔬果与其他种类是食品的消费量都没有明显的相关关系。
+\item
+  EEC国家的红肉、蛋、奶、鱼的消费量显著高于COMECON国家，COMECON国家的谷物、坚果的消费量显著高于EEC国家，EEC国家的蔬果消费量的方差显著大于COMECON国家的蔬果消费量。
+\end{itemize}
+
+\subsubsection{预处理}
+
+对数据进行初步处理，对Economy项进行数值化（C对应1，E对应2），以方便后续的研究。
+
+\subsection{建模}
+
+\subsubsection{因子分析}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(}\StringTok{"stats"}\NormalTok{)}
+\NormalTok{respc <-}\StringTok{ }\KeywordTok{princomp}\NormalTok{(data)}
+\NormalTok{respc}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Call:
+## princomp(x = data)
+## 
+## Standard deviations:
+##     Comp.1     Comp.2     Comp.3     Comp.4     Comp.5     Comp.6 
+## 12.2126359  5.4287362  3.8785887  2.8265815  1.8677511  1.5367332 
+##     Comp.7     Comp.8     Comp.9    Comp.10 
+##  1.2245192  0.8290467  0.4979834  0.1717014 
+## 
+##  10  variables and  25 observations.
+\end{verbatim}
+
+\hypertarget{section}{%
+\subsubsection{}\label{section}}
+
+\subsection{改进与不足}
+
+\subsection{附录}
+
+\begin{verbatim}
+data <- read.table('Europrotein.dat',header = TRUE,sep = ':')
+
+# EDA
+library("ggplot2")
+library("GGally")
+ggpairs(subset(data, select = -Country ))
+\end{verbatim}
+
+
+\end{document}
